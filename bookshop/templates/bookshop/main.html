@@ -1,0 +1,98 @@
+{% load static %}
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Книжный магазин</title>
+    <link rel="stylesheet" href="{% static 'bookshop/css/main.css' %}">
+    <link rel="icon" href="{% static 'bookshop/img/templates/favicon.ico' %}" type="image/x-icon">
+</head>
+<body>
+    {% csrf_token %}
+    {% include 'bookshop/header.html' %}
+    <section>
+        <div class="section__container">
+            <div class="best-container">
+                <div class="best-slider">
+                    <div class="best-container__item">
+                        <div class="best-container__item-image">
+                            <img src="{% static 'bookshop/img/templates/checkmark.svg' %}" alt="">
+                        </div>
+                        <h1>Удобный сервис</h1>
+                    </div>
+                    <div class="best-container__item">
+                        <div class="best-container__item-image">
+                            <img src="{% static 'bookshop/img/templates/checkmark.svg' %}" alt="">
+                        </div>
+                        <h1>Быстрая обратная связь</h1>
+                    </div>
+                    <div class="best-container__item">
+                        <div class="best-container__item-image">
+                            <img src="{% static 'bookshop/img/templates/checkmark.svg' %}" alt="">
+                        </div>
+                        <h1>Доставка по всей России</h1>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="section__recommended">
+            <div class="section__container">
+                <h2 class="section__recommended-title">Рекомендуемые товары</h2>
+            </div>
+            <div class="section__container section__container_extended">
+                <button class="products__pagination-button-select"></button>
+                <div class="section__container">
+                    <div class="slider-wrapper" id="update-slider">
+                        <div class="products__inner products__inner_flex">
+                            {% for book in books %}
+                            <div class="product product_slider">
+                                <a href="{% url 'bookshop:book' book.id %}" class="product__link">
+                                    <div class="product__img">
+                                        {% if book.img_path == "" or book.img_path == None %}
+                                        <img src="{% static 'bookshop/img/products/placeholder.jpg' %}">
+                                        {% else %}
+                                        <img src="{% static book.img_path %}">
+                                        {% endif %}
+                                    </div>
+                                </a>
+                                <div class="product__information">
+                                    <a href="{% url 'bookshop:book' book.id %}" class="product__link">
+                                        <div class="product__information-inner">
+                                            {% if book.count > 10 %}
+                                            <p class="product__count">В наличии</p>
+                                            {% elif book.count <= 0 %}
+                                            <p class="product__count product__count_sold-out-color">Нет в наличии</p>
+                                            {% else %}
+                                            <p class="product__count product__count_few-products-color">Осталось {{ book.count }} шт.</p>
+                                            {% endif %}
+                                            <h3 class="product__title">{{ book.title|truncatechars:50}}</h3>
+                                            <p class="product__author">{{ book.author|truncatechars:50 }}</p>
+                                            <div class="price">{{ book.price }} ₽/шт.</div>
+                                        </div>
+                                    </a>
+                                </div>
+                            </div>
+                            {% endfor %}
+                        </div>
+                    </div>
+                </div>
+                <button class="products__pagination-button-select"></button>
+            </div>
+        </div>
+        <a class="catalog-block" href="{% url 'bookshop:catalog' %}">
+            <p>Перейти в каталог</p>
+        </a>
+        <div class="section__container">
+            <div class="address">
+                <div class="address__text">
+                    <span>Наш адрес:</span><br>Москва г,<br>Тверской б-р,<br>д. 15 стр. 2,<br>почтовый индекс 123104<br><span>Обратная связь:</span><br>+7 (999) 888-77-66<br>example@email.ru
+                </div>
+                <iframe class="address__map" src="https://www.openstreetmap.org/export/embed.html?bbox=37.59807944297791%2C55.75996205075892%2C37.60161995887757%2C55.76125388311142&amp;layer=mapnik"></iframe>
+            </div>
+        </div>
+    </section>
+    {% include 'bookshop/footer.html' %}  
+    <script defer src="{% static 'bookshop/js/mainScript.js' %}"></script>
+</body>
+</html>

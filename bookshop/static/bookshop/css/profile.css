@@ -1,0 +1,135 @@
+@import url("base.css");
+@import url("header.css");
+@import url("footer.css");
+@import url("general-classes.css");
+
+.order {
+    margin: 40px 0px;
+    box-shadow: 0 4px 4px rgba(0, 0, 0, 0.1);
+    padding: 30px;
+}
+
+.order:last-child {
+    margin: 40px 0px 0px 0px;
+}
+
+.section__orders {
+    width: 1062px;
+    margin: 45px auto 0px auto;
+}
+
+.order__inner {
+    display: flex;
+    justify-content: space-between;
+}
+
+.order__inner .product__count {
+    font-size: 21px;
+}
+
+.order-item {
+    display: flex;
+    gap: 30px;
+    justify-content: flex-end;
+    margin: 20px 0px;
+}
+
+.show-more-button img {
+    rotate: 270deg;
+    transition: transform 0.3s ease;
+    cursor: pointer;
+}
+
+.show-more-button_active img {
+    transform: rotate(180deg);
+}
+
+.order-items {
+    max-height: 0;
+    overflow: hidden;
+    transition: max-height 0.3s ease;
+}
+
+.order-items_open {
+    max-height: 1000px; /* Подбирается с запасом, главное — больше, чем самый длинный блок */
+}
+
+.section__orders-head {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.section__orders-head h2 {
+    font-family: 'Source Sans Pro Bold';
+    font-size: 36px;
+    align-items: center;
+}
+
+@media (max-width: 1024px) {
+    .section__orders {
+        width: 763px;
+    }
+}
+
+@media (max-width: 768px) {
+    .section__orders {
+        width: 520px;
+    }
+
+    .product__title {
+        font-size: 18px;
+    }
+
+    .order__inner .product__count {
+        font-size: 18px;
+    }
+
+    .order-item {
+        gap: 15px;
+    }
+}
+
+@media (max-width: 576px) {
+    .section__orders {
+        width: 246px;
+    }
+
+    .section__orders-head h2 {
+        font-size: 21px;
+    }
+
+    #logout-button {
+        font-size: 18px;
+        width: 100px;
+    }
+
+    .order {
+        padding: 10px;
+    }
+
+    .order__inner {
+        flex-wrap: wrap;
+    }
+
+    .order-total-sum {
+        margin-left: 10px;
+    }
+
+    .order-items .order-item {
+        display: grid;
+        grid-template-columns: 50% auto auto;
+    }
+
+    .section__orders {
+        margin: 25px auto 0px auto;
+    }
+
+    .order {
+        margin: 30px 0px;
+    }
+
+    .order:last-child {
+        margin: 30px 0px 0px 0px;
+    }
+}

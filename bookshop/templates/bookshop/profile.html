@@ -1,0 +1,56 @@
+{% load static %}
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Мой профиль</title>
+    <link rel="stylesheet" href="{% static 'bookshop/css/profile.css' %}">
+    <link rel="icon" href="{% static 'bookshop/img/templates/favicon.ico' %}" type="image/x-icon">
+</head>
+<body>
+    {% csrf_token %}
+    {% include 'bookshop/header.html' %}
+    <section>
+        <div class="section__container">
+            <div class="section__path">
+                <a href="{% url 'bookshop:main' %}" class="section__path-part">Главная</a>
+                <a class="section__path-part">Мой профиль</a>
+            </div>
+            <div class="category-labels">
+                <h1 class="category-labels__title">Мой профиль</h1>
+            </div>
+            <div class="section__orders">
+                <div class="section__orders-head">
+                    <h2>Мои заказы</h2>
+                    <button class="action-button action-button_logout" id="logout-button">Выйти</button>
+                </div>
+                {% for order in orders %}
+                <div class="order">
+                    <div class="order__inner">
+                        <div class="show-more-button"><img src="{% static 'bookshop/img/templates/arrow.svg' %}"></div>
+                        <div class="product__title product__title_underline">Заказ №{{ order.id }}</div>
+                        <div class="product__author">—</div>
+                        <div class="product__title product__title_normal {% if order.status == 'В обработке' or order.status == 'Отправлен' %}product__count_few-products-color{% elif order.status == 'Готов к получению' or order.status == 'Получен' %}product__count{% else %}product__count_sold-out-color{% endif %}">{{ order.status }}</div>
+                        <div class="product__author">—</div>
+                        <div class="product__title product__title_normal">{{ order.created_at|date:"d.m.Y H:i" }}</div>
+                        <div class="product__author">—</div>
+                        <div class="order-total-sum product__title product__title_normal"></div>
+                        <div class="product__author">—</div>
+                        <div class="order-total-count product__title product__title_normal"></div>
+                    </div>
+                    <div class="order-items">
+                    {% for item in order.orderitem_set.all %}
+                    <div class="order-item"><span class="product__title">{{ item.book.title }}</span><span class="product__title product__title_normal" data-price="{{ item.book.price }}">{{ item.book.price }} ₽</span><span class="product__title product__title_normal" data-count="{{ item.quantity }}">{{ item.quantity }} шт.</span>
+                      </div>
+                    {% endfor %}
+                    </div>
+                </div>
+                {% endfor %}
+            </div>
+        </div>
+    </section>
+    {% include 'bookshop/footer.html' %}
+    <script defer src="{% static 'bookshop/js/profileScript.js' %}"></script>
+</body>
+</html>

@@ -1,0 +1,151 @@
+{% load static %}
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Корзина</title>
+    <link rel="stylesheet" href="{% static 'bookshop/css/cart.css' %}">
+    <link rel="icon" href="{% static 'bookshop/img/templates/favicon.ico' %}" type="image/x-icon">
+</head>
+<body>
+    {% csrf_token %}
+    {% include 'bookshop/header.html' %}
+    <section>
+        <div class="section__container">
+            <div class="section__path">
+                <a href="{% url 'bookshop:main' %}" class="section__path-part">Главная</a>
+                <a class="section__path-part">Корзина</a>
+            </div>
+            <div class="category-labels">
+                <h1 class="category-labels__title">Корзина</h1>
+            </div>
+            <div class="section__cart" id="update-cart">
+                <div class="cart-products">
+                    <div class="cart-products__headers">
+                        <div class="cart-products__header">
+                            <h3 class="product__title">Товар</h3>
+                        </div>
+                        <div class="cart-products__header">
+                            <h3 class="product__title">Цена</h3>
+                            <h3 class="product__title">Количество</h3>
+                            <h3 class="product__title">Сумма</h3>
+                        </div>
+                    </div>
+                    <div class="cart-products__wrapper">
+                        {% for cart_item in cart_items %}
+                        <div class="cart-product">
+                            <div class="overlay-button" delete-from-cart data-product-id="{{ cart_item.book.id }}">
+                                <svg xmlns="http://www.w3.org/2000/svg">
+                                    <path d="M5.21552 5.0559L5.28852 4.9719C5.41551 4.84488 5.58386 4.76765 5.76297 4.75425C5.94208 4.74086 6.12005 4.79218 6.26452 4.8989L6.34852 4.9719L12.8185 11.4409L19.2885 4.9709C19.3577 4.8993 19.4405 4.8422 19.532 4.80294C19.6236 4.76367 19.722 4.74303 19.8216 4.74221C19.9212 4.74139 20.0199 4.76042 20.1121 4.79817C20.2042 4.83593 20.2879 4.89166 20.3583 4.96211C20.4287 5.03256 20.4844 5.11632 20.522 5.20851C20.5597 5.3007 20.5786 5.39947 20.5777 5.49906C20.5768 5.59864 20.5561 5.69704 20.5167 5.78853C20.4774 5.88001 20.4202 5.96274 20.3485 6.0319L13.8795 12.5019L20.3495 18.9719C20.4764 19.099 20.5534 19.2674 20.5666 19.4465C20.5799 19.6256 20.5284 19.8035 20.4215 19.9479L20.3485 20.0319C20.2215 20.1589 20.0532 20.2361 19.8741 20.2495C19.695 20.2629 19.517 20.2116 19.3725 20.1049L19.2885 20.0319L12.8185 13.5629L6.34852 20.0329C6.207 20.1694 6.01751 20.245 5.82087 20.2432C5.62422 20.2414 5.43615 20.1624 5.29715 20.0233C5.15816 19.8841 5.07938 19.696 5.07776 19.4993C5.07614 19.3027 5.15183 19.1133 5.28852 18.9719L11.7575 12.5019L5.28752 6.0319C5.16065 5.90478 5.08361 5.73636 5.07039 5.55726C5.05718 5.37815 5.10868 5.20025 5.21552 5.0559L5.28852 4.9719L5.21552 5.0559Z"/>
+                                </svg>
+                            </div>
+                            <div class="cart-product__img-and-info">
+                                <div class="cart-product__img">
+                                    <div class="overlay-button overlay-button_top_min20px_left_min20px {% if cart_item.book.id in wishlist_books %}overlay-button_active{% endif %}" add-to-wishlist data-product-id="{{ cart_item.book.id }}">
+                                        <svg xmlns="http://www.w3.org/2000/svg">
+                                            <path d="M13.5168 5.57998L12.6968 6.40198L11.8728 5.57798C10.8647 4.57003 9.49754 4.00382 8.07198 4.00391C6.64643 4.00401 5.27929 4.5704 4.27134 5.57848C3.26338 6.58657 2.69717 7.95378 2.69727 9.37934C2.69736 10.8049 3.26375 12.172 4.27184 13.18L12.1668 21.075C12.3075 21.2154 12.4981 21.2943 12.6968 21.2943C12.8956 21.2943 13.0862 21.2154 13.2268 21.075L21.1288 13.178C22.1357 12.1698 22.7012 10.8031 22.701 9.37828C22.7008 7.95341 22.135 6.58689 21.1278 5.57898C20.6282 5.07903 20.035 4.68242 19.382 4.41182C18.729 4.14123 18.0292 4.00195 17.3223 4.00195C16.6155 4.00195 15.9156 4.14123 15.2627 4.41182C14.6097 4.68242 14.0165 5.07903 13.5168 5.57898V5.57998ZM20.0648 12.12L12.6968 19.485L5.33184 12.12C4.96887 11.7609 4.68045 11.3335 4.48317 10.8626C4.28589 10.3916 4.18363 9.88632 4.18227 9.37572C4.18092 8.86511 4.28048 8.35927 4.47526 7.88727C4.67003 7.41527 4.95617 6.98642 5.31722 6.62537C5.67828 6.26431 6.10713 5.97818 6.57912 5.7834C7.05112 5.58863 7.55696 5.48906 8.06757 5.49042C8.57817 5.49178 9.08348 5.59404 9.55443 5.79132C10.0254 5.9886 10.4527 6.27702 10.8118 6.63998L12.1698 7.99698C12.2405 8.06772 12.3246 8.12362 12.4171 8.16139C12.5097 8.19915 12.6089 8.21804 12.7089 8.21692C12.8088 8.2158 12.9076 8.19471 12.9993 8.15487C13.091 8.11504 13.1738 8.05728 13.2428 7.98498L14.5768 6.63998C15.3121 5.95556 16.2842 5.583 17.2886 5.60067C18.293 5.61834 19.2514 6.02487 19.9622 6.73474C20.673 7.44461 21.0807 8.40249 21.0997 9.40686C21.1186 10.4112 20.7473 11.3838 20.0638 12.12H20.0648Z"/>
+                                        </svg>
+                                    </div>
+                                    <a href="{% url 'bookshop:book' cart_item.book.id %}" class="product__link">
+                                        {% if cart_item.book.img_path == "" or cart_item.book.img_path == None %}
+                                        <img src="{% static 'bookshop/img/products/placeholder.jpg' %}">
+                                        {% else %}
+                                        <img src="{% static cart_item.book.img_path %}">
+                                        {% endif %}
+                                    </a>
+                                </div> 
+                                <div class="cart-product__info">
+                                    <a href="{% url 'bookshop:book' cart_item.book.id %}" class="product__link">
+                                    <h3 class="product__title">{{ cart_item.book.title }}</h3>
+                                        <div class=".cart-product__info-inner">
+                                            {% if cart_item.book.count > 10 %}
+                                            <p class="product__count">В наличии</p>
+                                            {% elif cart_item.book.count <= 0 %}
+                                            <p class="product__count product__count_sold-out-color">Нет в наличии</p>
+                                            {% else %}
+                                            <p class="product__count product__count_few-products-color">Осталось {{ cart_item.book.count }} шт.</p>
+                                            {% endif %}
+                                            <p class="product__author">{{ cart_item.book.author }}</p>
+                                        </div>
+                                    </a>
+                                </div>
+                            </div>
+                            {% if cart_item.book.count <= 0 %}
+                            <div>
+                            </div>
+                            {% else %}
+                            <div class="cart-product__price">
+                                <div class="price">{{ cart_item.book.price }} ₽/шт.</div>
+                                <div class="count">
+                                    <input type="button" value="–" class="count__minus" data-product-id="{{ cart_item.book.id }}">
+                                    <p class="count__quantity">{{ cart_item.quantity }}</p>
+                                    <input type="button" value="+" class="count__plus" data-product-id="{{ cart_item.book.id }}">
+                                </div>
+                                <div class="total-price"></div>
+                            </div>
+                            {% endif %}
+                        </div>
+                        {% endfor %}
+                    </div>
+                </div>
+                <div class="cart-total-price">
+                    <div class="cart-total-price__text">Ваш заказ</div>
+                    <div class="cart-total-price__count">
+                        <div>Товаров ({{ count_items }}):</div>
+                        <div id="total-sum"></div>
+                    </div>
+                    <div class="cart-total-price__result">
+                        <div class="price">Итого:</div>
+                        <div class="price" id="total-sum"></div>
+                    </div>
+                    <div class="cart-total-price__result-button">
+                        <button class="action-button" id="open-modal-button">Перейти к оформлению</button>
+                    </div>
+                </div>
+                <div class="small-width-order-box">
+                    <div class="cart-total-price__count">
+                        <div>Товаров ({{ count_items }}):</div>
+                        <div id="total-sum"></div>
+                    </div>
+                    <div class="cart-total-price__result">
+                        <div class="price">Итого:</div>
+                        <div class="price" id="total-sum"></div>
+                    </div>
+                    <div class="cart-total-price__result-button">
+                        <button class="action-button" id="open-modal-button">Перейти к оформлению</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+    <div class="modal">
+        <div class="modal__box">
+            <div class="overlay-button" id="close-modal-button">
+                <svg xmlns="http://www.w3.org/2000/svg">
+                    <path d="M5.21552 5.0559L5.28852 4.9719C5.41551 4.84488 5.58386 4.76765 5.76297 4.75425C5.94208 4.74086 6.12005 4.79218 6.26452 4.8989L6.34852 4.9719L12.8185 11.4409L19.2885 4.9709C19.3577 4.8993 19.4405 4.8422 19.532 4.80294C19.6236 4.76367 19.722 4.74303 19.8216 4.74221C19.9212 4.74139 20.0199 4.76042 20.1121 4.79817C20.2042 4.83593 20.2879 4.89166 20.3583 4.96211C20.4287 5.03256 20.4844 5.11632 20.522 5.20851C20.5597 5.3007 20.5786 5.39947 20.5777 5.49906C20.5768 5.59864 20.5561 5.69704 20.5167 5.78853C20.4774 5.88001 20.4202 5.96274 20.3485 6.0319L13.8795 12.5019L20.3495 18.9719C20.4764 19.099 20.5534 19.2674 20.5666 19.4465C20.5799 19.6256 20.5284 19.8035 20.4215 19.9479L20.3485 20.0319C20.2215 20.1589 20.0532 20.2361 19.8741 20.2495C19.695 20.2629 19.517 20.2116 19.3725 20.1049L19.2885 20.0319L12.8185 13.5629L6.34852 20.0329C6.207 20.1694 6.01751 20.245 5.82087 20.2432C5.62422 20.2414 5.43615 20.1624 5.29715 20.0233C5.15816 19.8841 5.07938 19.696 5.07776 19.4993C5.07614 19.3027 5.15183 19.1133 5.28852 18.9719L11.7575 12.5019L5.28752 6.0319C5.16065 5.90478 5.08361 5.73636 5.07039 5.55726C5.05718 5.37815 5.10868 5.20025 5.21552 5.0559L5.28852 4.9719L5.21552 5.0559Z"/>
+                </svg>
+            </div>
+            <div class="modal__box-inner">
+                <h2 class="cart-total-price__text cart-total-price__text_margin_null">Оформление заказа</h2>
+                <div class="field">
+                    <input type="text" name="full-name" id="full-name" placeholder="ФИО покупателя" maxlength="255" class="field__input field__input_extended">
+                </div>
+                <div class="field">
+                    <input type="email" name="email" id="email" placeholder="Электронная почта" maxlength="255" class="field__input field__input_extended">
+                </div>
+                <div class="field">
+                    <input type="text" name="mail-index" id="mail-index" placeholder="Почтовый индекс" maxlength="20" class="field__input field__input_extended">
+                </div>
+                <div class="cart-total-price__result cart-total-price__result_padding_null">
+                    <div class="price">Итого:</div>
+                    <div class="price" id="total-sum"></div>
+                </div>
+                <button type="submit" class="action-button" id="order-button">Оформить</button>
+            </div>
+        </div>
+    </div>
+    {% include 'bookshop/footer.html' %}
+    <script defer src="{% static 'bookshop/js/cartScript.js' %}"></script>
+</body>
+</html>

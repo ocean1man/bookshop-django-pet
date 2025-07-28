@@ -1,0 +1,41 @@
+{% load static %}
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="{% static 'bookshop/css/login.css' %}">
+    <link rel="icon" href="{% static 'bookshop/img/templates/favicon.ico' %}" type="image/x-icon">
+    <title>Регистрация</title>
+</head>
+<body>
+    {% csrf_token %}
+    {% include 'bookshop/header.html' %}
+    <section class="section__container">
+        <div class="section__path">
+            <a href="{% url 'bookshop:main' %}" class="section__path-part">Главная</a>
+            <a class="section__path-part">Регистрация</a>
+        </div>
+        <div class="category-labels">
+            <h1 class="category-labels__title">Регистрация</h1>
+        </div>
+        <div class="section__auth">
+            <a href="{% url 'bookshop:login' %}" class="redirect-link">Уже есть аккаунт?</a>
+            <form class="auth-form" method="post">
+                <div class="field field_signup">
+                    <input type="text" name="username" id="username" placeholder="Имя пользователя" maxlength="150" class="field__input field__input_extended">
+                </div>
+                <div class="field">
+                    <input type="password" name="password" id="password" placeholder="Пароль" class="field__input field__input_extended">
+                </div>
+                <div class="field">
+                    <input type="password" name="confirm-password" id="confirm-password" placeholder="Повторите пароль" class="field__input field__input_extended">
+                </div>
+                <button type="submit" class="action-button" id="send-button">Зарегистрироваться</button>
+            </form>
+        </div>
+    </section>
+    {% include 'bookshop/footer.html' %}
+    <script defer src="{% static 'bookshop/js/signupScript.js' %}"></script>
+</body>
+</html>

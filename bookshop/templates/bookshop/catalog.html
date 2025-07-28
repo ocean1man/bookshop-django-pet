@@ -1,0 +1,292 @@
+{% load static %}
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Каталог</title>
+    <link rel="stylesheet" href="{% static 'bookshop/css/catalog.css' %}">
+    <link rel="icon" href="{% static 'bookshop/img/templates/favicon.ico' %}" type="image/x-icon">
+</head>
+<body>
+    {% csrf_token %}
+    {% include 'bookshop/header.html' %}
+    <section>
+        <div class="section__container" id="update-catalog">
+            <div class="section__path">
+                <a href="{% url 'bookshop:main' %}" class="section__path-part">Главная</a>
+                <a class="section__path-part">Каталог</a>
+            </div>
+            <div class="category-labels">
+                <h1 class="category-labels__title">Каталог</h1>
+                <p class="category-labels__products-count">Найдено {{ total_count }} {{ total_count_word }}</p>
+            </div>
+            <div class="sort-and-products">
+                <div class="sort">
+                    <button class="sort__show-hide-button">{{ show_hide_text }}</button>
+                    <div class="sort__filters" {% if show_hide_filters == "" %}style="display: none;"{% else %}style="display: block;"{% endif %}>
+                        <div class="filter__checkbox">
+                            <div class="filter__header">
+                                <p class="filter__title">Жанры</p>
+                            </div>
+                            <form method="get" class="filter__elements" id="genre-form">
+                                <ul class="filter__list">
+                                    {% for genre in genres %}
+                                    <li class="filter__element">
+                                        <label class="filter__element-label">
+                                            <input
+                                            type="checkbox"
+                                            name="genre"
+                                            value="{{ genre.id }}"
+                                            {% if genre.id in genre_ids %}checked{% endif %}>
+                                            <div class="filter__fake-checkbox"></div>{{ genre.name }}
+                                        </label>
+                                    </li>
+                                    {% endfor %}
+                                </ul>
+                            </form>
+                        </div>
+                        <div class="filter__radio">
+                            <div class="filter__header">
+                                <p class="filter__title">Авторы</p>
+                            </div>
+                            <form method="get" class="filter__elements" id="author-form">
+                                <ul class="filter__list">
+                                    {% for author in authors %}
+                                    <li class="filter__element">
+                                        <label class="filter__element-label">
+                                            <input 
+                                            type="radio" 
+                                            name="author" 
+                                            value="{{ author.id }}"
+                                            {% if author.id == author_id %}checked{% endif %}>
+                                            {{ author.fullname }}
+                                        </label>
+                                    </li>
+                                    {% endfor %}
+                                </ul>
+                            </form>
+                        </div>
+                        <div class="filter__radio">
+                            <div class="filter__header">
+                                <p class="filter__title">Возрастное ограничение</p>
+                            </div>
+                            <form method="get" class="filter__elements" id="age-limit-form">
+                                <ul class="filter__list">
+                                    {% for age in age_limits %}
+                                    <li class="filter__element">
+                                        <label class="filter__element-label">
+                                            <input 
+                                            type="radio" 
+                                            name="age_limit" 
+                                            value="{{ age.id }}"
+                                            {% if age.id == age_limit_id %}checked{% endif %}>
+                                            {{ age.value }}
+                                        </label>
+                                    </li>
+                                    {% endfor %}
+                                </ul>
+                            </form>
+                        </div>
+                        <div class="filter__radio">
+                            <div class="filter__header">
+                                <p class="filter__title">Век публикации</p>
+                            </div>
+                            <form method="get" class="filter__elements" id="century-publication-form">
+                                <ul class="filter__list">
+                                    {% for century in century_publications %}
+                                    <li class="filter__element">
+                                        <label class="filter__element-label">
+                                            <input 
+                                            type="radio" 
+                                            name="century_publication" 
+                                            value="{{ century }}"
+                                            {% if century == century_publication %}checked{% endif %}>
+                                            {{ century }}
+                                        </label>
+                                    </li>
+                                    {% endfor %}
+                                </ul>
+                            </form>
+                        </div>
+                        <div class="filter__price">
+                            <div class="filter__header">
+                                <p class="filter__title">Диапазон цен</p>
+                            </div>
+                            <form method="get" class="price__fields" id="price-form">
+                                <div class="price__fields-inner">
+                                    <input type="number" min="{{ min_price }}" max="{{ max_price }}" placeholder="от {{ min_price }}" name="min_price" value="{{ min_price_value }}">
+                                    <svg xmlns="http://www.w3.org/2000/svg">
+                                        <path d="M0.799805 0.569336H23.1998V1.72094H0.799805V0.569336Z"/>
+                                    </svg>
+                                    <input type="number" min="{{ min_price }}" max="{{ max_price }}" placeholder="до {{ max_price }}" name="max_price" value="{{ max_price_value }}">
+                                </div>
+                                <button type="submit" class="price__fields-button">Применить цену</button>
+                            </form> 
+                        </div> 
+                        <div class="filter__clear">
+                            <button class="filter__clear-button">Сбросить фильтр</button>
+                        </div>
+                    </div>
+                </div>
+                <div class="products">
+                    <div class="sort-products">
+                        <div class="sort-products__inner">
+                            <form class="sort-products__buttons" method="get" id="sort-form">
+                                <p class="sort-products__label">Сортировать:</p>
+                                <label {% if sort_order == '' %}class="sort-products__button sort-products__button_active"{% else %}class="sort-products__button"{% endif %}>
+                                    <input type="radio" value="" name="sort" {% if sort_order == '' %}checked{% endif %}>по умолчанию
+                                </label>
+                                <label {% if sort_order == 'low_to_high' %}class="sort-products__button sort-products__button_active"{% else %}class="sort-products__button"{% endif %}>
+                                    <input type="radio" value="low_to_high" name="sort" {% if sort_order == 'low_to_high' %}checked{% endif %}>дешевле
+                                </label>
+                                <label {% if sort_order == 'high_to_low' %}class="sort-products__button sort-products__button_active"{% else %}class="sort-products__button"{% endif %}>
+                                    <input type="radio" value="high_to_low" name="sort" {% if sort_order == 'high_to_low' %}checked{% endif %}>дороже
+                                </label>
+                            </form>
+                            <form class="sort-products__grid-change" method="get" id="view-form">
+                                <label class="sort-products__grid-change-inner">
+                                    <input type="checkbox" name="view" value="row" {% if view_type == 'row' %}checked{% endif %}>
+                                    <div {% if view_type == 'row' %}class="sort-products__list-button sort-products__list-button_active"{% else %}class="sort-products__list-button"{% endif %}>
+                                    </div>
+                                    <div {% if view_type == '' %}class="sort-products__grid-button sort-products__grid-button_active"{% else %}class="sort-products__grid-button"{% endif %}>
+                                    </div>
+                                </label>
+                            </form>
+                        </div>
+                    </div>
+                    {% if view_type == '' %}
+                    <div class="products__inner">
+                        {% for book in page %}
+                        <div class="product">
+                            <a href="{% url 'bookshop:book' book.id %}" class="product__link">
+                                <div class="product__img">
+                                    {% if book.img_path == "" or book.img_path == None %}
+                                    <img src="{% static 'bookshop/img/products/placeholder.jpg' %}">
+                                    {% else %}
+                                    <img src="{% static book.img_path %}">
+                                    {% endif %}
+                                </div>
+                            </a>
+                            <div class="overlay-button {% if book.id in wishlist_books %}overlay-button_active{% endif %}" data-product-id="{{ book.id }}">
+                                <svg xmlns="http://www.w3.org/2000/svg">
+                                    <path d="M13.5168 5.57998L12.6968 6.40198L11.8728 5.57798C10.8647 4.57003 9.49754 4.00382 8.07198 4.00391C6.64643 4.00401 5.27929 4.5704 4.27134 5.57848C3.26338 6.58657 2.69717 7.95378 2.69727 9.37934C2.69736 10.8049 3.26375 12.172 4.27184 13.18L12.1668 21.075C12.3075 21.2154 12.4981 21.2943 12.6968 21.2943C12.8956 21.2943 13.0862 21.2154 13.2268 21.075L21.1288 13.178C22.1357 12.1698 22.7012 10.8031 22.701 9.37828C22.7008 7.95341 22.135 6.58689 21.1278 5.57898C20.6282 5.07903 20.035 4.68242 19.382 4.41182C18.729 4.14123 18.0292 4.00195 17.3223 4.00195C16.6155 4.00195 15.9156 4.14123 15.2627 4.41182C14.6097 4.68242 14.0165 5.07903 13.5168 5.57898V5.57998ZM20.0648 12.12L12.6968 19.485L5.33184 12.12C4.96887 11.7609 4.68045 11.3335 4.48317 10.8626C4.28589 10.3916 4.18363 9.88632 4.18227 9.37572C4.18092 8.86511 4.28048 8.35927 4.47526 7.88727C4.67003 7.41527 4.95617 6.98642 5.31722 6.62537C5.67828 6.26431 6.10713 5.97818 6.57912 5.7834C7.05112 5.58863 7.55696 5.48906 8.06757 5.49042C8.57817 5.49178 9.08348 5.59404 9.55443 5.79132C10.0254 5.9886 10.4527 6.27702 10.8118 6.63998L12.1698 7.99698C12.2405 8.06772 12.3246 8.12362 12.4171 8.16139C12.5097 8.19915 12.6089 8.21804 12.7089 8.21692C12.8088 8.2158 12.9076 8.19471 12.9993 8.15487C13.091 8.11504 13.1738 8.05728 13.2428 7.98498L14.5768 6.63998C15.3121 5.95556 16.2842 5.583 17.2886 5.60067C18.293 5.61834 19.2514 6.02487 19.9622 6.73474C20.673 7.44461 21.0807 8.40249 21.0997 9.40686C21.1186 10.4112 20.7473 11.3838 20.0638 12.12H20.0648Z"/>
+                                </svg>
+                            </div>
+                            <div class="product__information">
+                                <a href="{% url 'bookshop:book' book.id %}" class="product__link">
+                                    <div class="product__information-inner">
+                                        {% if book.count > 10 %}
+                                        <p class="product__count">В наличии</p>
+                                        {% elif book.count <= 0 %}
+                                        <p class="product__count product__count_sold-out-color">Нет в наличии</p>
+                                        {% else %}
+                                        <p class="product__count product__count_few-products-color">Осталось {{ book.count }} шт.</p>
+                                        {% endif %}
+                                        <h3 class="product__title">{{ book.title|truncatechars:50}}</h3>
+                                        <p class="product__author">{{ book.author|truncatechars:50 }}</p>
+                                        <div class="price">{{ book.price }} ₽/шт.</div>
+                                    </div>
+                                </a>
+                                <div class="product__buy">
+                                {% if book.count <= 0 %}
+                                    <button class="action-button action-button_disabled">В корзину</button>
+                                {% else %}
+                                    {% if book.id in cart_books %}
+                                    <a href="{% url 'bookshop:cart' %}" class="product__link">
+                                        <button class="action-button action-button_active">В корзине</button>
+                                    </a>
+                                    {% else %}
+                                    <button class="action-button" data-product-id="{{ book.id }}" id="buy-button">В корзину</button>
+                                    {% endif %}
+                                {% endif %}
+                                </div>
+                            </div>
+                        </div>
+                        {% endfor %}
+                    </div>
+                    {% else %}
+                    <div class="products__row-inner">
+                        {% for book in page %}
+                        <div class="product-row">
+                            <div class="product-row__images">
+                                <a href="{% url 'bookshop:book' book.id %}" class="product__link">
+                                    {% if book.img_path == "" or book.img_path == None %}
+                                    <img src="{% static 'bookshop/img/products/placeholder.jpg' %}" class="product-row__image">
+                                    {% else %}
+                                    <img src="{% static book.img_path %}" class="product-row__image">
+                                    {% endif %}
+                                </a>
+                                <div class="overlay-button overlay-button_top_min20px_left_min20px {% if book.id in wishlist_books %}overlay-button_active{% endif %}" data-product-id="{{ book.id }}">
+                                    <svg xmlns="http://www.w3.org/2000/svg">
+                                        <path d="M13.3196 6.08L12.4996 6.902L11.6756 6.078C10.6675 5.07004 9.30028 4.50383 7.87472 4.50393C6.44916 4.50402 5.08203 5.07041 4.07407 6.0785C3.06612 7.08659 2.49991 8.4538 2.5 9.87935C2.50009 11.3049 3.06648 12.672 4.07457 13.68L11.9696 21.575C12.1102 21.7155 12.3008 21.7943 12.4996 21.7943C12.6983 21.7943 12.8889 21.7155 13.0296 21.575L20.9316 13.678C21.9385 12.6698 22.5039 11.3032 22.5038 9.87829C22.5036 8.45342 21.9377 7.08691 20.9306 6.079C20.4309 5.57904 19.8377 5.18243 19.1847 4.91184C18.5318 4.64124 17.8319 4.50197 17.1251 4.50197C16.4183 4.50197 15.7184 4.64124 15.0654 4.91184C14.4124 5.18243 13.8192 5.57904 13.3196 6.079V6.08ZM19.8676 12.62L12.4996 19.985L5.13457 12.62C4.7716 12.2609 4.48319 11.8335 4.28591 11.3626C4.08863 10.8916 3.98637 10.3863 3.98501 9.87573C3.98365 9.36513 4.08322 8.85929 4.27799 8.38729C4.47277 7.91529 4.7589 7.48644 5.11996 7.12538C5.48101 6.76433 5.90986 6.47819 6.38186 6.28342C6.85386 6.08865 7.3597 5.98908 7.8703 5.99044C8.38091 5.99179 8.88621 6.09405 9.35717 6.29133C9.82812 6.48862 10.2554 6.77703 10.6146 7.14L11.9726 8.497C12.0432 8.56774 12.1273 8.62363 12.2199 8.6614C12.3124 8.69917 12.4116 8.71805 12.5116 8.71693C12.6116 8.71581 12.7103 8.69472 12.802 8.65489C12.8937 8.61506 12.9765 8.5573 13.0456 8.485L14.3796 7.14C15.1149 6.45557 16.087 6.08301 17.0914 6.10068C18.0958 6.11836 19.0542 6.52489 19.7649 7.23476C20.4757 7.94463 20.8835 8.9025 20.9024 9.90687C20.9214 10.9112 20.5501 11.8838 19.8666 12.62H19.8676Z"/>
+                                    </svg> 
+                                </div>   
+                            </div>
+                            <div class="product-row__info">
+                                <div class="product-row__info-inner">
+                                    <a href="{% url 'bookshop:book' book.id %}" class="product__link">
+                                        <h3 class="product__title">{{ book.title }}</h3>
+                                        <div class="product-row__count-and-articul">
+                                            <div class="product-row__count-and-articul-inner">
+                                                {% if book.count > 10 %}
+                                                <p class="product__count">В наличии</p>
+                                                {% elif book.count <= 0 %}
+                                                <p class="product__count product__count_sold-out-color">Нет в наличии</p>
+                                                {% else %}
+                                                <p class="product__count product__count_few-products-color">Осталось {{ book.count }} шт.</p>
+                                                {% endif %}
+                                                <p class="product__author product__author_margin_left">{{ book.author }}</p>
+                                            </div>
+                                        </div>
+                                        <p class="product__description">{{ book.description|truncatechars:180 }}</p>
+                                    </a>
+                                </div>
+                                <div class="product-row__price-button">
+                                    <div class="price">{{ book.price }} ₽/шт.</div>
+                                    {% if book.count <= 0 %}
+                                    <button class="action-button action-button_disabled">В корзину</button>
+                                    {% else %}
+                                    {% if book.id in cart_books %}
+                                    <a href="{% url 'bookshop:cart' %}" class="product__link">
+                                        <button class="action-button action-button_active">В корзине</button>
+                                    </a>
+                                    {% else %}
+                                    <button class="action-button" data-product-id="{{ book.id }}" id="buy-button">В корзину</button>
+                                    {% endif %}
+                                    {% endif %}
+                                </div>
+                            </div>
+                        </div>
+                        {% endfor %}
+                    </div>  
+                    {% endif %}
+                    <div class="products__pagination">
+                        <div class="products__pagination-select-elements">
+                            {% if page.has_previous %}
+                                <button class="products__pagination-button-select" data-page="{{ page.previous_page_number }}"></button>
+                    
+                                {% if page.number|add:-1 > 0 %}
+                                    <button class="products__pagination-button">{{ page.number|add:-1 }}</button>
+                                {% endif %}
+                            {% endif %}
+                    
+                            <button class="products__pagination-button products__pagination-button_selected">{{ page.number }}</button>
+                    
+                            {% if page.has_next %}
+                                {% if page.number|add:1 <= page.paginator.num_pages %}
+                                    <button class="products__pagination-button">{{ page.number|add:1 }}</button>
+                                {% endif %}
+                    
+                                <button class="products__pagination-button-select" data-page="{{ page.next_page_number }}"></button>
+                            {% endif %}
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+    {% include 'bookshop/footer.html' %}
+    <script defer src="{% static 'bookshop/js/catalogScript.js' %}"></script>
+</body>
+</html>

@@ -1,0 +1,122 @@
+@import url("base.css");
+@import url("header.css");
+@import url("footer.css");
+@import url("general-classes.css");
+
+.main-product {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 50px;
+}
+
+.main-product__img {
+    position: relative;
+    border-radius: 10px;
+    align-self: start;
+}
+
+.main-product__img img{
+    width: 100%;
+    border-radius: 10px;
+}
+
+.main-product__img_border_none {
+    border: none;
+}
+
+.main-product__info-inner {
+    display: grid;
+    grid-template-columns: auto;
+    gap: 25px;
+}
+
+.main-product__title h1 {
+    font-size: 48px;
+    font-family: 'Source Sans Pro Bold';
+}
+
+.main-product__author .product__count {
+    padding: 0;
+}
+
+.main-product__description-text {
+    font-size: 18px;
+    line-height: 24px;
+    font-weight: 500;
+}
+
+.main-product__description-text-character {
+    display: grid;
+    grid-template-columns: 1fr;
+}
+
+.main-product__description-text-character span {
+    font-weight: bold;
+}
+
+@media (max-width: 1024px) {
+    .product-row__price-button button {
+        width: 175px;
+    }
+
+    .main-product__title h1 {
+        font-size: 40px;
+    }
+
+    .main-product {
+        gap: 30px;
+    }
+
+    .main-product__info-inner {
+        gap: 15px;
+    }
+}
+
+@media (max-width: 768px) {
+    .product-row__price-button {
+        gap: 15px;
+        flex-direction: column;
+        align-items: start;
+    }
+
+    .main-product__title h1 {
+        font-size: 35px;
+    }
+
+    .overlay-button_top_min25px_left_min20px {
+        top: -20px;
+        left: -15px;
+}
+}
+
+@media (max-width: 576px) {
+    .main-product__title h1 {
+        font-size: 25px;
+    }
+
+    .main-product {
+        grid-template-columns: repeat(1, 1fr);
+        gap: 15px;
+    }
+
+    .product-row__price-button {
+        align-items: center;
+    }
+
+    .product__count {
+        margin: 0 auto;
+    }
+
+    .main-product__title h1 {
+        text-align: center;
+    }
+
+    .section__path {
+        padding: 25px 0 5px 0;
+        text-align: center;
+    }
+
+    .main-product__description-text {
+        text-align: center;
+    }
+}

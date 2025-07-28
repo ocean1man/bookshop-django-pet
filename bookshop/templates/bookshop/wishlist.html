@@ -1,0 +1,161 @@
+{% load static %}
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Избранное</title>
+    <link rel="stylesheet" href="{% static 'bookshop/css/wishlist.css' %}">
+    <link rel="icon" href="{% static 'bookshop/img/templates/favicon.ico' %}" type="image/x-icon">
+</head>
+<body>
+    {% csrf_token %}
+    {% include 'bookshop/header.html' %}
+    <section>
+        <div class="section__container">
+            <div class="section__path">
+                <a href="{% url 'bookshop:main' %}" class="section__path-part">Главная</a>
+                <a class="section__path-part">Избранное</a>
+            </div>
+            <div class="category-labels">
+                <h1 class="category-labels__title">Избранное</h1>
+            </div>
+            <div class="section__wishlist" id="update-wishlist">
+                <div class="sort-products">
+                    <div class="sort-products__inner">
+                        <form class="sort-products__buttons" method="get" id="sort-form">
+                            <p class="sort-products__label">Сортировать:</p>
+                            <label {% if sort_order == '' %}class="sort-products__button sort-products__button_active"{% else %}class="sort-products__button"{% endif %}>
+                                <input type="radio" value="" name="sort" {% if sort_order == '' %}checked{% endif %}>по умолчанию
+                            </label>
+                            <label {% if sort_order == 'low_to_high' %}class="sort-products__button sort-products__button_active"{% else %}class="sort-products__button"{% endif %}>
+                                <input type="radio" value="low_to_high" name="sort" {% if sort_order == 'low_to_high' %}checked{% endif %}>дешевле
+                            </label>
+                            <label {% if sort_order == 'high_to_low' %}class="sort-products__button sort-products__button_active"{% else %}class="sort-products__button"{% endif %}>
+                                <input type="radio" value="high_to_low" name="sort" {% if sort_order == 'high_to_low' %}checked{% endif %}>дороже
+                            </label>
+                        </form>
+                        <form class="sort-products__grid-change" method="get" id="view-form">
+                            <label class="sort-products__grid-change-inner">
+                                <input type="checkbox" name="view" value="row" {% if view_type == 'row' %}checked{% endif %}>
+                                <div {% if view_type == 'row' %}class="sort-products__list-button sort-products__list-button_active"{% else %}class="sort-products__list-button"{% endif %}>
+                                </div>
+                                <div {% if view_type == '' %}class="sort-products__grid-button sort-products__grid-button_active"{% else %}class="sort-products__grid-button"{% endif %}>
+                                </div>
+                            </label>
+                        </form>
+                    </div>
+                </div>
+                {% if view_type == '' %}
+                <div class="products__inner products__inner_extended">
+                    {% for wishlist_item in wishlist_items %}
+                    <div class="product">
+                        <a href="{% url 'bookshop:book' wishlist_item.book.id %}" class="product__link">
+                            <div class="product__img">
+                                {% if wishlist_item.book.img_path == "" or wishlist_item.book.img_path == None %}
+                                <img src="{% static 'bookshop/img/products/placeholder.jpg' %}">
+                                {% else %}
+                                <img src="{% static wishlist_item.book.img_path %}">
+                                {% endif %}
+                            </div>
+                        </a>
+                        <div class="overlay-button" data-product-id="{{ wishlist_item.book.id }}">
+                            <svg xmlns="http://www.w3.org/2000/svg">
+                                <path d="M5.21552 5.0559L5.28852 4.9719C5.41551 4.84488 5.58386 4.76765 5.76297 4.75425C5.94208 4.74086 6.12005 4.79218 6.26452 4.8989L6.34852 4.9719L12.8185 11.4409L19.2885 4.9709C19.3577 4.8993 19.4405 4.8422 19.532 4.80294C19.6236 4.76367 19.722 4.74303 19.8216 4.74221C19.9212 4.74139 20.0199 4.76042 20.1121 4.79817C20.2042 4.83593 20.2879 4.89166 20.3583 4.96211C20.4287 5.03256 20.4844 5.11632 20.522 5.20851C20.5597 5.3007 20.5786 5.39947 20.5777 5.49906C20.5768 5.59864 20.5561 5.69704 20.5167 5.78853C20.4774 5.88001 20.4202 5.96274 20.3485 6.0319L13.8795 12.5019L20.3495 18.9719C20.4764 19.099 20.5534 19.2674 20.5666 19.4465C20.5799 19.6256 20.5284 19.8035 20.4215 19.9479L20.3485 20.0319C20.2215 20.1589 20.0532 20.2361 19.8741 20.2495C19.695 20.2629 19.517 20.2116 19.3725 20.1049L19.2885 20.0319L12.8185 13.5629L6.34852 20.0329C6.207 20.1694 6.01751 20.245 5.82087 20.2432C5.62422 20.2414 5.43615 20.1624 5.29715 20.0233C5.15816 19.8841 5.07938 19.696 5.07776 19.4993C5.07614 19.3027 5.15183 19.1133 5.28852 18.9719L11.7575 12.5019L5.28752 6.0319C5.16065 5.90478 5.08361 5.73636 5.07039 5.55726C5.05718 5.37815 5.10868 5.20025 5.21552 5.0559L5.28852 4.9719L5.21552 5.0559Z"/>
+                            </svg>
+                        </div>
+                        <div class="product__information">
+                            <a href="{% url 'bookshop:book' wishlist_item.book.id %}" class="product__link">
+                                <div class="product__information-inner">
+                                    {% if wishlist_item.book.count > 10 %}
+                                    <p class="product__count">В наличии</p>
+                                    {% elif wishlist_item.book.count <= 0 %}
+                                    <p class="product__count product__count_sold-out-color">Нет в наличии</p>
+                                    {% else %}
+                                    <p class="product__count product__count_few-products-color">Осталось {{ wishlist_item.book.count }} шт.</p>
+                                    {% endif %}
+                                    <h3 class="product__title">{{ wishlist_item.book.title|truncatechars:50}}</h3>
+                                    <p class="product__author">{{ wishlist_item.book.author|truncatechars:50 }}</p>
+                                    <div class="price">{{ wishlist_item.book.price }} ₽/шт.</div>
+                                </div>
+                            </a>
+                            <div class="product__buy">
+                            {% if wishlist_item.book.count <= 0 %}
+                                <button class="action-button action-button_disabled">В корзину</button>
+                            {% else %}
+                            {% if wishlist_item.book.id in cart_books %}
+                            <a href="{% url 'bookshop:cart' %}" class="product__link">
+                                <button class="action-button action-button_active">В корзине</button>
+                            </a>
+                            {% else %}
+                            <button class="action-button" data-product-id="{{ wishlist_item.book.id }}" id="buy-button">В корзину</button>
+                            {% endif %}
+                            {% endif %}
+                            </div>
+                        </div>
+                    </div>
+                    {% endfor %}
+                </div>
+                {% else %}
+                <div class="products__row-inner">
+                    {% for wishlist_item in wishlist_items %}
+                    <div class="product-row">
+                        <div class="product-row__images">
+                            <a href="{% url 'bookshop:book' wishlist_item.book.id %}" class="product__link">
+                                {% if wishlist_item.book.img_path == "" or wishlist_item.book.img_path == None %}
+                                <img src="{% static 'bookshop/img/products/placeholder.jpg' %}" class="product-row__image">
+                                {% else %}
+                                <img src="{% static wishlist_item.book.img_path %}" class="product-row__image">
+                                {% endif %}
+                            </a>
+                            <div class="overlay-button overlay-button_top_min20px_left_min20px" data-product-id="{{ wishlist_item.book.id }}">
+                                <svg xmlns="http://www.w3.org/2000/svg">
+                                    <path d="M5.21552 5.0559L5.28852 4.9719C5.41551 4.84488 5.58386 4.76765 5.76297 4.75425C5.94208 4.74086 6.12005 4.79218 6.26452 4.8989L6.34852 4.9719L12.8185 11.4409L19.2885 4.9709C19.3577 4.8993 19.4405 4.8422 19.532 4.80294C19.6236 4.76367 19.722 4.74303 19.8216 4.74221C19.9212 4.74139 20.0199 4.76042 20.1121 4.79817C20.2042 4.83593 20.2879 4.89166 20.3583 4.96211C20.4287 5.03256 20.4844 5.11632 20.522 5.20851C20.5597 5.3007 20.5786 5.39947 20.5777 5.49906C20.5768 5.59864 20.5561 5.69704 20.5167 5.78853C20.4774 5.88001 20.4202 5.96274 20.3485 6.0319L13.8795 12.5019L20.3495 18.9719C20.4764 19.099 20.5534 19.2674 20.5666 19.4465C20.5799 19.6256 20.5284 19.8035 20.4215 19.9479L20.3485 20.0319C20.2215 20.1589 20.0532 20.2361 19.8741 20.2495C19.695 20.2629 19.517 20.2116 19.3725 20.1049L19.2885 20.0319L12.8185 13.5629L6.34852 20.0329C6.207 20.1694 6.01751 20.245 5.82087 20.2432C5.62422 20.2414 5.43615 20.1624 5.29715 20.0233C5.15816 19.8841 5.07938 19.696 5.07776 19.4993C5.07614 19.3027 5.15183 19.1133 5.28852 18.9719L11.7575 12.5019L5.28752 6.0319C5.16065 5.90478 5.08361 5.73636 5.07039 5.55726C5.05718 5.37815 5.10868 5.20025 5.21552 5.0559L5.28852 4.9719L5.21552 5.0559Z"/>
+                                </svg> 
+                            </div>   
+                        </div>
+                        <div class="product-row__info">
+                            <div class="product-row__info-inner">
+                                <a href="{% url 'bookshop:book' wishlist_item.book.id %}" class="product__link">
+                                    <h3 class="product__title">{{ wishlist_item.book.title }}</h3>
+                                    <div class="product-row__count-and-articul">
+                                        <div class="product-row__count-and-articul-inner">
+                                            {% if wishlist_item.book.count > 10 %}
+                                            <p class="product__count">В наличии</p>
+                                            {% elif wishlist_item.book.count <= 0 %}
+                                            <p class="product__count product__count_sold-out-color">Нет в наличии</p>
+                                            {% else %}
+                                            <p class="product__count product__count_few-products-color">Осталось {{ wishlist_item.book.count }} шт.</p>
+                                            {% endif %}
+                                            <p class="product__author product__author_margin_left">{{ wishlist_item.book.author }}</p>
+                                        </div>
+                                    </div>
+                                    <p class="product__description">{{ wishlist_item.book.description|truncatechars:180 }}</p>
+                                </a>
+                            </div>
+                            <div class="product-row__price-button">
+                                <div class="price">{{ wishlist_item.book.price }} ₽/шт.</div>
+                                {% if wishlist_item.book.count <= 0 %}
+                                <button class="action-button action-button_disabled">В корзину</button>
+                                {% else %}
+                                {% if wishlist_item.book.id in cart_books %}
+                                <a href="{% url 'bookshop:cart' %}" class="product__link">
+                                    <button class="action-button action-button_active">В корзине</button>
+                                </a>
+                                {% else %}
+                                <button class="action-button" data-product-id="{{ wishlist_item.book.id }}" id="buy-button">В корзину</button>
+                                {% endif %}
+                                {% endif %}
+                            </div>
+                        </div>
+                    </div>
+                    {% endfor %}
+                </div>  
+                {% endif %}
+            </div>
+        </div>
+    </section>
+    {% include 'bookshop/footer.html' %}
+    <script defer src="{% static 'bookshop/js/wishlistScript.js' %}"></script>
+</body>
+</html>

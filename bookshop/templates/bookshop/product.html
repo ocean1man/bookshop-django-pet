@@ -1,0 +1,82 @@
+{% load static %}
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{{ book.title }}</title>
+    <link rel="stylesheet" href="{% static 'bookshop/css/product.css' %}">
+    <link rel="icon" href="{% static 'bookshop/img/templates/favicon.ico' %}" type="image/x-icon">
+</head>
+<body>
+    {% csrf_token %}
+    {% include 'bookshop/header.html' %}
+    <section>
+        <div class="section__container">
+            <div class="section__path">
+                <a href="{% url 'bookshop:main' %}" class="section__path-part">Главная</a>
+                <a href="{% url 'bookshop:catalog' %}" class="section__path-part">Каталог</a>
+                <a class="section__path-part">{{ book.title }}</a>
+            </div>
+            <div class="main-product">
+                <div class="main-product__img">
+                    {% if book.img_path == "" or book.img_path == None %}
+                    <img src="{% static 'bookshop/img/products/placeholder.jpg' %}">
+                    {% else %}
+                    <img src="{% static book.img_path %}">
+                    {% endif %}
+                    <div class="overlay-button overlay-button_top_min25px_left_min20px overlay-button_large {% if wishlist_item %}overlay-button_active{% endif %}" data-product-id="{{ book.id }}">
+                        <svg xmlns="http://www.w3.org/2000/svg">
+                            <path d="M17.0941 7.43998L16.0007 8.53598L14.9021 7.43731C13.5579 6.09337 11.735 5.33842 9.83426 5.33855C7.93352 5.33867 6.11067 6.09386 4.76673 7.43798C3.42279 8.7821 2.66784 10.605 2.66797 12.5058C2.66809 14.4065 3.42328 16.2294 4.7674 17.5733L15.2941 28.1C15.4816 28.2872 15.7357 28.3924 16.0007 28.3924C16.2657 28.3924 16.5199 28.2872 16.7074 28.1L27.2434 17.5706C28.5859 16.2264 29.3399 14.4042 29.3397 12.5044C29.3394 10.6045 28.5849 8.78252 27.2421 7.43865C26.5759 6.77204 25.7849 6.24322 24.9143 5.88243C24.0437 5.52164 23.1105 5.33594 22.1681 5.33594C21.2256 5.33594 20.2925 5.52164 19.4218 5.88243C18.5512 6.24322 17.7602 6.77204 17.0941 7.43865V7.43998ZM25.8247 16.16L16.0007 25.98L6.18073 16.16C5.69677 15.6811 5.31222 15.1114 5.04918 14.4834C4.78614 13.8555 4.64979 13.1818 4.64798 12.501C4.64617 11.8201 4.77893 11.1457 5.03863 10.5164C5.29832 9.88703 5.67984 9.31523 6.16124 8.83382C6.64265 8.35242 7.21445 7.9709 7.84378 7.71121C8.47311 7.45151 9.14757 7.31875 9.82837 7.32056C10.5092 7.32237 11.1829 7.45872 11.8109 7.72176C12.4388 7.9848 13.0086 8.36935 13.4874 8.85331L15.2981 10.6626C15.3923 10.757 15.5044 10.8315 15.6278 10.8818C15.7512 10.9322 15.8835 10.9574 16.0168 10.9559C16.1501 10.9544 16.2817 10.9263 16.404 10.8732C16.5262 10.8201 16.6367 10.743 16.7287 10.6466L18.5074 8.85331C19.4878 7.94075 20.7839 7.44399 22.1231 7.46756C23.4623 7.49112 24.7402 8.03316 25.6879 8.97966C26.6356 9.92615 27.1793 11.2033 27.2045 12.5425C27.2298 13.8816 26.7347 15.1784 25.8234 16.16H25.8247Z"></path>
+                        </svg> 
+                    </div>                        
+                </div>
+                <div class="main-product__info">
+                    <div class="main-product__info-inner">
+                        <div class="main-product__title">
+                            <h1>{{ book.title }}</h1>
+                        </div>
+                        {% if book.count > 10 %}
+                        <p class="product__count">В наличии</p>
+                        {% elif book.count <= 0 %}
+                        <p class="product__count product__count_sold-out-color">Нет в наличии</p>
+                        {% else %}
+                        <p class="product__count product__count_few-products-color">Осталось {{ book.count }} шт.</p>
+                        {% endif %}
+                        <div class="product-row__price-button">
+                            <div class="price">{{ book.price }} ₽/шт.</div>
+                            {% if book.count <= 0 %}
+                            <button class="action-button action-button_disabled">В корзину</button>
+                            {% else %}
+                            {% if cart_item %}
+                            <a href="{% url 'bookshop:cart' %}" class="product__link">
+                                <button class="action-button action-button_active">В корзине</button>
+                            </a>
+                            {% else %}
+                            <button class="action-button" data-product-id="{{ book.id }}">В корзину</button>
+                            {% endif %}
+                            {% endif %}
+                        </div>
+                        <div class="main-product__description-text">
+                            <p>
+                                {{ book.description }}
+                            </p>
+                        </div>
+                        <div class="main-product__description-text">
+                            <div class="main-product__description-text-character">
+                                <div><span>Автор:</span> {{ book.author.fullname }}</div>
+                                <div><span>Год публикации:</span> {{ book.year }}</div>
+                                <div><span>Возрастное ограничение:</span> {{ book.age_limit }}</div>
+                                <div><span>ISBN:</span> {{ book.ISBN }}</div>
+                                <div><span>Жанры:</span> {% for genre in book.genres.all %} {{ genre.name }}{% if not forloop.last %}, {% endif %} {% endfor %}</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+    {% include 'bookshop/footer.html' %}
+    <script defer src="{% static 'bookshop/js/productScript.js' %}"></script>
+</body>
+</html>

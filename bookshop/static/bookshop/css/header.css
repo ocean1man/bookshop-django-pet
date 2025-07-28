@@ -1,0 +1,246 @@
+.header {
+    padding: 16px 0px;
+    box-shadow: 0 10px 16px -5px #dddddd;
+}
+
+.header__container {
+    display: flex;
+    width: 1735px;
+    margin: 0 auto;
+    align-items: center;
+    height: 100%;
+}
+
+.header__catalog-link {
+    color: #121212;
+    font-weight: 600;
+    font-size: 21px;
+    text-decoration: none;
+    letter-spacing: 0.3px;
+    display: flex;
+    align-items: center;
+    transition: color 0.4s;
+}
+
+.header__catalog-link svg {
+    height: 21px;
+    width: 21px;
+    fill: black;
+    margin-right: 10px;
+    transition: fill 0.4s;
+}
+
+.header__catalog-link:hover {
+    color: #1ac5f4;
+}
+
+.header__catalog-link:hover svg {
+    fill: #1ac5f4;
+}
+
+.user {
+    display: flex;
+    margin-left: auto;
+}
+
+.user__button {
+    color: #121212;
+    font-size: 21px;
+    text-decoration: none;
+    display: flex;
+    align-items: center;
+    margin: 0px 15px 0px 0px;
+    transition: color 0.4s;
+}
+
+.user__button svg {
+    width: 31px;
+    height: 30px;
+    fill: black;
+    margin-right: 15px;
+    transition: fill 0.4s;
+}
+
+.user__button:hover {
+    color: #1ac5f4;
+}
+
+.user__button:hover svg {
+    fill: #1ac5f4;
+}
+
+.user a:last-child {
+    margin: 0px 0px 0px 0px;
+}
+
+.header__logo {
+    color: #012472;
+    font-size: 38px;
+    font-family: "Source Sans Pro Black";
+    letter-spacing: 3px;
+    text-transform: uppercase;
+    margin: 0 auto;
+    text-decoration: none;
+    display: block;
+}
+
+@media (max-width: 1600px) {
+    .header__container {
+        width: 1415px;
+    }
+
+    .header__logo {
+        font-size: 30px;
+    }    
+}
+
+@media (max-width: 1366px) {
+    .header__container {
+        width: 1172px;
+    }
+
+    .header__logo {
+        font-size: 25px;
+    }    
+
+    .header__catalog-link {
+        font-size: 18px;
+    }
+
+    .header__catalog-link svg {
+        height: 18px;
+        width: 18px;
+    }
+
+    header .field__input {
+        width: 265px;
+        font-size: 18px;
+    }
+
+    header .field__button {
+        width: 30px;
+        height: 30px;
+    }
+    
+    header .field__button svg {
+        width: 30px;
+        height: 30px;
+    }
+
+    .user__button {
+        font-size: 18px;
+    }
+
+    .user__button svg {
+        width: 28px;
+        height: 27px;
+    }
+
+    header .action-button_login {
+        padding: 12px 30px 12px 30px;
+        font-size: 18px;
+    }
+}
+
+@media (max-width: 1024px) {
+    .header__container {
+        width: 929px;
+    }
+
+    .header__logo {
+        font-size: 21px;
+        margin: 0px 0px 0px 20px;
+        text-align: center;
+    }
+
+    header .field__input {
+        width: 165px;
+    }
+
+    header .field {
+        margin: 0px 20px 0px 0px;
+    }
+
+    header .field__input {
+        width: 170px;
+        font-size: 18px;
+    }
+
+    .product_slider {
+        width: 241px;
+    }
+
+    .user__button {
+        margin: 0px 10px 0px 0px;
+    }
+
+    .user__button svg {
+        margin-right: 7px;
+    }
+}
+
+@media (max-width: 768px) {
+    .header__container {
+        width: 686px;
+        margin: 0 21px;
+    }
+
+    .header__logo {
+        font-size: 21px;
+        margin: 0px 10px 0px 10px;
+        text-align: center;
+    }
+
+    header .field {
+        margin: 0px 10px 0px 0px;
+    }
+
+    header .field__input {
+        width: 100px;
+    }
+
+    header .field__button {
+        width: 27px;
+        height: 27px;
+    }
+    
+    header .field__button svg {
+        width: 27px;
+        height: 27px;
+    }
+
+    .user__button {
+        margin: 0px 10px 0px 0px;
+    }
+
+    .user__button svg {
+        margin-right: 0px;
+        display: none;
+    }
+
+    .header__catalog-link svg {
+        margin: 0px;
+        display: none;
+    }
+}
+
+@media (max-width: 576px) {
+    .header__container {
+        width: 360px;
+        margin: 0 auto;
+        flex-direction: column;
+        gap: 10px;
+    }
+
+    header .field__input {
+        width: 160px;
+    }
+
+    .user {
+        margin: 0;
+    }
+    
+    .header__catalog-link {
+        display: none;
+    }
+}
