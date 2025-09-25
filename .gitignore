@@ -1,6 +1,3 @@
-config/__pycache__/
-bookshop/migrations/__pycache__/
-bookshop/__pycache__/
-bookshop/management/commands/__pycache__/
-bookshop/management/__pycache__/
 db.sqlite3
+.venv/
+__pycache__/

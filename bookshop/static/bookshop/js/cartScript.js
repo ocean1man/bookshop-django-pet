@@ -7,7 +7,7 @@ function addQuantity() {
     
             try {
                 const response = await fetch(`/cart/update/${productId}/`, { 
-                    method: "PUT",
+                    method: "PATCH",
                     headers: {
                         "Content-Type": "application/json",
                         "X-CSRFToken": getCSRFToken(),
@@ -42,7 +42,7 @@ function reduceQuantity() {
     
             try {
                 const response = await fetch(`/cart/update/${productId}/`, { 
-                    method: "PUT",
+                    method: "PATCH",
                     headers: {
                         "Content-Type": "application/json",
                         "X-CSRFToken": getCSRFToken(),

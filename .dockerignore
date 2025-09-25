@@ -2,9 +2,6 @@
 .gitignore
 Dockerfile
 .dockerignore
-config/__pycache__/
-bookshop/migrations/__pycache__/
-bookshop/__pycache__/
-bookshop/management/commands/__pycache__/
-bookshop/management/__pycache__/
+__pycache__/
 db.sqlite3
+.venv/
