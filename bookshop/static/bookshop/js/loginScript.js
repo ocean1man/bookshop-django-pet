@@ -1,3 +1,5 @@
+import { getCSRFToken } from './getCSRF.js';
+
 let loginButton = document.querySelector("#send-button");
 loginButton.addEventListener("click", async function (event) {
 
@@ -34,12 +36,3 @@ loginButton.addEventListener("click", async function (event) {
         console.error("Ошибка:", err);
     }
 });
-
-
-function getCSRFToken() {
-    const cookieValue = document.cookie
-      .split("; ")
-      .find((row) => row.startsWith("csrftoken="))
-      ?.split("=")[1] || "";
-    return cookieValue;
-}

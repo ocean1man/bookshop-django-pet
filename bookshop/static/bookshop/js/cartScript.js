@@ -1,3 +1,5 @@
+import { getCSRFToken } from './getCSRF.js';
+
 function addQuantity() {
     const buttons = document.querySelectorAll(".count__plus");
     buttons.forEach(function(button) {
@@ -285,15 +287,6 @@ async function updateCart() {
     } catch (err) { 
         console.error("Ошибка при обновлении корзины:", err);
     }
-};
-
-
-function getCSRFToken() {
-    const cookieValue = document.cookie
-      .split("; ")
-      .find((row) => row.startsWith("csrftoken="))
-      ?.split("=")[1] || "";
-    return cookieValue;
 };
 
 

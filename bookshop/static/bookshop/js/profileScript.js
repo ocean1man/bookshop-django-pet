@@ -1,3 +1,5 @@
+import { getCSRFToken } from './getCSRF.js';
+
 document.querySelectorAll(".order").forEach(orderBlock => {
     let totalPrice = 0;
     let totalCount = 0;
@@ -59,15 +61,6 @@ document.querySelector("#logout-button").addEventListener("click", async functio
         }
     };
 });
-
-
-function getCSRFToken() {
-    const cookieValue = document.cookie
-      .split("; ")
-      .find((row) => row.startsWith("csrftoken="))
-      ?.split("=")[1] || "";
-    return cookieValue;
-};
 
 
 if (window.innerWidth <= 768) {

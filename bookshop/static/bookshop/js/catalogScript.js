@@ -1,3 +1,5 @@
+import { getCSRFToken } from './getCSRF.js';
+
 function updateSearch() {
     const form = document.querySelector('#search-form');
     form.addEventListener('submit', function(event) {
@@ -433,15 +435,6 @@ async function sendRequest(url) {
     } catch (err) {
         console.error("Ошибка при загрузке данных:", err);
     }
-};
-
-
-function getCSRFToken() {
-    const cookieValue = document.cookie
-      .split("; ")
-      .find((row) => row.startsWith("csrftoken="))
-      ?.split("=")[1] || "";
-    return cookieValue;
 };
 
 

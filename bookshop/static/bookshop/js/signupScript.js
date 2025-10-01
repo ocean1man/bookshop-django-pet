@@ -1,3 +1,5 @@
+import { getCSRFToken } from './getCSRF.js';
+
 let loginButton = document.querySelector("#send-button");
 loginButton.addEventListener("click", async function (event) {
 
@@ -45,15 +47,6 @@ loginButton.addEventListener("click", async function (event) {
         alert("Пароль должен быть длиной не менее 8 символов, содержать хотя бы одну заглавную букву, одну строчку букву и одну цифру!");
     }
 });
-
-
-function getCSRFToken() {
-    const cookieValue = document.cookie
-      .split("; ")
-      .find((row) => row.startsWith("csrftoken="))
-      ?.split("=")[1] || "";
-    return cookieValue;
-};
 
 
 function checkPassword(password) {

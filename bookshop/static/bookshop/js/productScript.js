@@ -1,3 +1,5 @@
+import { getCSRFToken } from './getCSRF.js';
+
 function addToCart() {
     let addButtons = document.querySelectorAll(".action-button:not(.action-button_disabled):not(.action-button_active)");
     addButtons.forEach(button => {
@@ -116,12 +118,3 @@ async function sendRequest(url) {
         console.error("Ошибка при загрузке данных:", err);
     }
 };
-
-
-function getCSRFToken() {
-    const cookieValue = document.cookie
-      .split("; ")
-      .find((row) => row.startsWith("csrftoken="))
-      ?.split("=")[1] || "";
-    return cookieValue;
-}

@@ -1,3 +1,5 @@
+import { getCSRFToken } from './getCSRF.js';
+
 function updateSort() {
     const radioButtons = document.querySelectorAll('input[name="sort"]');
     radioButtons.forEach(function(radio) {
@@ -174,13 +176,4 @@ async function updateProducts() {
     } catch (err) { 
         console.error("Ошибка при обновлении:", err);
     }
-};
-
-
-function getCSRFToken() {
-    const cookieValue = document.cookie
-      .split("; ")
-      .find((row) => row.startsWith("csrftoken="))
-      ?.split("=")[1] || "";
-    return cookieValue;
 };
