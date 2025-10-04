@@ -5,6 +5,10 @@ from bookshop.models import AgeLimit, Author, Book, CartItem, Genre, WishlistIte
 from bookshop.services.session_store import get_wishlist_and_cart
 from django.db.models import Q, Max, Min
 from django.core.paginator import Paginator, EmptyPage
+from django.core.cache import cache
+
+CACHE_TIMEOUT = 60 * 5
+CACHE_VERSION = 1
 
 @dataclass(frozen=True)
 class CatalogFilters:
@@ -30,6 +34,40 @@ def _russian_goods_word(n: int) -> str:
         return 'товара'
     return 'товаров'
 
+def get_books_cached(book_ids: List[int]) -> List[Book]:
+    if not book_ids:
+        return []
+
+    keys = {book_id: f"book:{book_id}" for book_id in book_ids}
+
+    cached_data: Dict[str, Book] = cache.get_many(keys.values())
+
+    cached_books: Dict[int, Book] = {}
+    for book_id, key in keys.items():
+        if key in cached_data:
+            cached_books[book_id] = cached_data[key]
+
+    missing_ids = [bid for bid in book_ids if bid not in cached_books]
+
+    if missing_ids:
+        fresh_books = (
+            Book.objects
+            .filter(id__in=missing_ids)
+            .select_related("author", "age_limit")
+            .prefetch_related("genres")
+        )
+
+        cache.set_many(
+            {f"book:{b.id}": b for b in fresh_books},
+            timeout=CACHE_TIMEOUT,
+            version=CACHE_VERSION
+        )
+
+        for b in fresh_books:
+            cached_books[b.id] = b
+
+    return [cached_books[bid] for bid in book_ids if bid in cached_books]
+
 def build_catalog_context(session_id, user, *, filters: CatalogFilters, page_size: int = 12) -> Dict[str, Any]:
     wishlist_books: List[int] = []
     cart_books: List[int] = []
@@ -47,7 +85,7 @@ def build_catalog_context(session_id, user, *, filters: CatalogFilters, page_siz
                             .values_list("book_id", flat=True)
         )
 
-    books = Book.objects.all().select_related("author", "age_limit").prefetch_related("genres")
+    books = Book.objects.all().values_list("id", flat=True)
 
     if filters.genre_ids:
         books = books.filter(genres__id__in=filters.genre_ids)
@@ -104,6 +142,10 @@ def build_catalog_context(session_id, user, *, filters: CatalogFilters, page_siz
     authors = Author.objects.all()
     genres = Genre.objects.all()
     age_limits = AgeLimit.objects.all()
+
+    ids_on_page = list(page.object_list)
+    books_on_page = get_books_cached(ids_on_page)
+    page.object_list = books_on_page
 
     return {
         "page": page,
